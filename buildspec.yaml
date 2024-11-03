@@ -7,11 +7,11 @@ phases:
     on-failure: ABORT
     commands:
       - echo Login ECR.
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking
-      - docker build -t project2vola .
-      - docker tag project2vola:latest 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking/project2vola:latest
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 968647894618.dkr.ecr.us-east-1.amazonaws.com
+      - docker build -t coworking .
+      - docker tag coworking:latest 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking:latest
 
   build:
     on-failure: ABORT
     commands:
-      - docker push 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking/project2vola:latest
+      - docker push 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking:latest
