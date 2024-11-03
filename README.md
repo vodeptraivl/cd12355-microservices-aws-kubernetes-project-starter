@@ -36,11 +36,10 @@ kubectl apply -f deployment/postgresql-service.yaml
 ```bash
 kubectl port-forward --address 127.0.0.1 service/postgresql-service 5433:5432 &
 export DB_PASSWORD=`kubectl get secret project2-secrets -o jsonpath='{.data.password}' | base64 --decode`
-export DB_USER=`kubectl get configMap project2-config-map -o jsonpath='{.data.DB_USER}'`
-export DB_NAME=`kubectl get configMap project2-config-map -o jsonpath='{.data.DB_NAME}'`
-PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U ${DB_USER} -d ${DB_NAME} -p 5433 < ./db/1_create_tables.sql
-PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U ${DB_USER} -d ${DB_NAME} -p 5433 < ./db/2_seed_users.sql
-PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U ${DB_USER} -d ${DB_NAME} -p 5433 < ./db/3_seed_tokens.sql
+PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U voladbuser -d voladb -p 5433 < ./db/1_create_tables.sql
+PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U voladbuser -d voladb -p 5433 < ./db/2_seed_users.sql
+PGPASSWORD="$DB_PASSWORD" psql --host 127.0.0.1 -U voladbuser -d voladb -p 5433 < ./db/3_seed_tokens.sql
+
 
 ```
 
@@ -53,19 +52,15 @@ get the url and check web app's avaibility
 
 ```bash
 kubectl get service
-#NAME                 TYPE           CLUSTER-IP       EXTERNAL-IP                                                              PORT(S)          AGE
-#coworking            LoadBalancer   10.100.163.46    a39e16aa878994863af3031cebfea838-308774126.us-east-1.elb.amazonaws.com   5153:32405/TCP   40s
-#kubernetes           ClusterIP      10.100.0.1       <none>                                                                   443/TCP          30m
-#postgresql-service   ClusterIP      10.100.194.163   <none> 
 ```
-
-open this link in browser: http://a39e16aa878994863af3031cebfea838-308774126.us-east-1.elb.amazonaws.com:5153/api/reports/user_visits
+open this link in browser: http://a58eb9626c569475ebc5690e0cc6aa5f-1961523115.us-east-1.elb.amazonaws.com:5153/api/reports/user_visits
 
 ### Step 6. Logging
 Attach the CloudWatchAgentServerPolicy
+go to role and find role eksctl-project2-cluster-nodegroup--NodeInstanceRole-XXX
 ```bash
 aws iam attach-role-policy \
---role-name eksctl-project2-cluster-nodegroup--NodeInstanceRole-wXPyILALCcWt \
+--role-name eksctl-project2-cluster-nodegroup--NodeInstanceRole-7T09k7g5o9HM \
 --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 
 ```
