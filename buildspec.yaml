@@ -1,18 +1,17 @@
 version: 0.2
 
+env:
+  shell: /bin/sh
 phases:
   pre_build:
+    on-failure: ABORT
     commands:
-      - echo Logging into ECR
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - echo Login ECR.
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking
+      - docker build -t project2vola .
+      - docker tag project2vola:latest 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking/project2vola:latest
+
   build:
+    on-failure: ABORT
     commands:
-      - echo Starting build at `date`
-      - echo Building the Docker image...          
-      - docker build -t $IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER .
-      - docker tag $IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER      
-  post_build:
-    commands:
-      - echo Completed build at `date`
-      - echo Pushing the Docker image...
-      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$CODEBUILD_BUILD_NUMBER
+      - docker push 968647894618.dkr.ecr.us-east-1.amazonaws.com/coworking/project2vola:latest
